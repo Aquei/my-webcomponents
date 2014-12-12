@@ -1,0 +1,51 @@
+<link href="../classlist/classlist.html" rel="import">
+<template>
+	<style scoped>
+		@import url(https://cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css);
+	</style>
+	<i class="fa "></i>
+</template>
+
+
+<script>
+	(function(){
+		"use strict";
+		var FaIconProto, me, ca, t;
+		FaIconProto = Object.create(HTMLElement.prototype);
+		ca = document._currentScript || document.currentScript;
+		me = ca.ownerDocument;
+		t = me.querySelector("template").content;
+
+
+		FaIconProto.createdCallback = function(){
+			var shadow, tpl, ico, i, atts, attr, node_name, i2, cntnt;
+			shadow = this.createShadowRoot();
+			tpl = document.importNode(t, true);
+			ico = this.hasAttribute("icon")?this.getAttribute("icon"):null;
+
+			if(!ico){
+				ico = this.textContent;
+			}
+			
+			i = tpl.querySelector("i");
+			
+			
+			if(ico){
+				ico = ico.toLowerCase();
+				i.classList.add("fa-"+ico);
+			}
+			
+			atts = this.attributes;
+
+			if("spin" in atts){
+				i.classList.add("fa-spin");
+			}
+
+
+			shadow.appendChild(tpl);
+		}
+
+		document.registerElement("fa-icon", {prototype: FaIconProto});
+	})();
+</script>
+
