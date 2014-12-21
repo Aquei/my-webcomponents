@@ -1,0 +1,75 @@
+<link href="../classlist/classlist.html" rel="import">
+<link href="../fontawesome/fontawesome-core.html" rel="import">
+<template>
+	<style scoped>
+		@import url(https://cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css);
+	</style>
+	<i class="fa "></i>
+</template>
+
+
+<script>
+	(function(){
+		"use strict";
+		var FaIconProto, me, ca, t, update;
+		FaIconProto = Object.create(HTMLElement.prototype);
+		ca = document._currentScript || document.currentScript;
+		me = ca.ownerDocument;
+		t = me.querySelector("template").content;
+
+		FaIconProto.createdCallback = function(){
+			var shadow, tpl, ico, i, atts, attr, node_name, i2, cntnt;
+			shadow = this.createShadowRoot();
+			tpl = document.importNode(t, true);
+			ico = this.hasAttribute("data-icon")?this.getAttribute("data-icon"):null;
+			
+			i = tpl.querySelector("i");
+			
+			
+			if(ico){
+				ico = ico.toLowerCase();
+				i.classList.add("fa-"+ico);
+			}
+			
+			atts = this.attributes;
+
+			if("data-spin" in atts){
+				i.classList.add("fa-spin");
+			}
+
+
+			shadow.appendChild(tpl);
+		};
+
+		FaIconProto.attibuteChangedCallback = function(attrName, oldVal, newVal){
+			var root,i,icon;
+
+			root = this.shadowRoot;
+			i = root.querySelector("i");
+
+
+			if(attName === "data-icon" && this.getAttribute("icon")){
+				//icon名が変更、追加された
+				if(oldVal){
+					i.classList.remove("fa-"+oldVal);
+				}
+
+				icon = newVal.toLowerCase();
+				i.classList.add("fa-"+icon);
+			}
+
+			if(attrName === "spin"){
+				if(this.hasAttribute("data-spin")){
+					//追加
+					i.classList.add("fa-spin");
+				}else{
+					//削除
+					i.classList.remove("fa-spin");
+				}
+			}
+		};
+
+		document.registerElement("fa-icon", {prototype: FaIconProto});
+	})();
+</script>
+
