@@ -2,8 +2,6 @@
 *~
 *.swp
 
-<<<<<<< HEAD
-=======
 #bin
 *.jpe?g
 *.png
@@ -17,4 +15,3 @@
 
 #config
 .htacess
->>>>>>> work
