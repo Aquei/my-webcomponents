@@ -2,3 +2,19 @@
 *~
 *.swp
 
+<<<<<<< HEAD
+=======
+#bin
+*.jpe?g
+*.png
+*.gif
+*.webp
+*.mp[34]
+*.m4a
+*.ogg
+*.aac
+*.wav
+
+#config
+.htacess
+>>>>>>> work

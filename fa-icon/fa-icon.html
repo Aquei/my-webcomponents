@@ -1,4 +1,8 @@
 <link href="../classlist/classlist.html" rel="import">
+<<<<<<< HEAD
+=======
+<link href="../fontawesome/fontawesome-core.html" rel="import">
+>>>>>>> work
 <template>
 	<style scoped>
 		@import url(https://cdn.jsdelivr.net/fontawesome/latest/css/font-awesome.min.css);
@@ -10,22 +14,33 @@
 <script>
 	(function(){
 		"use strict";
+<<<<<<< HEAD
 		var FaIconProto, me, ca, t;
+=======
+		var FaIconProto, me, ca, t, update;
+>>>>>>> work
 		FaIconProto = Object.create(HTMLElement.prototype);
 		ca = document._currentScript || document.currentScript;
 		me = ca.ownerDocument;
 		t = me.querySelector("template").content;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> work
 		FaIconProto.createdCallback = function(){
 			var shadow, tpl, ico, i, atts, attr, node_name, i2, cntnt;
 			shadow = this.createShadowRoot();
 			tpl = document.importNode(t, true);
+<<<<<<< HEAD
 			ico = this.hasAttribute("icon")?this.getAttribute("icon"):null;
 
 			if(!ico){
 				ico = this.textContent;
 			}
+=======
+			ico = this.hasAttribute("data-icon")?this.getAttribute("data-icon"):null;
+>>>>>>> work
 			
 			i = tpl.querySelector("i");
 			
@@ -37,13 +52,49 @@
 			
 			atts = this.attributes;
 
+<<<<<<< HEAD
 			if("spin" in atts){
+=======
+			if("data-spin" in atts){
+>>>>>>> work
 				i.classList.add("fa-spin");
 			}
 
 
 			shadow.appendChild(tpl);
+<<<<<<< HEAD
 		}
+=======
+		};
+
+		FaIconProto.attibuteChangedCallback = function(attrName, oldVal, newVal){
+			var root,i,icon;
+
+			root = this.shadowRoot;
+			i = root.querySelector("i");
+
+
+			if(attName === "data-icon" && this.getAttribute("icon")){
+				//icon名が変更、追加された
+				if(oldVal){
+					i.classList.remove("fa-"+oldVal);
+				}
+
+				icon = newVal.toLowerCase();
+				i.classList.add("fa-"+icon);
+			}
+
+			if(attrName === "spin"){
+				if(this.hasAttribute("data-spin")){
+					//追加
+					i.classList.add("fa-spin");
+				}else{
+					//削除
+					i.classList.remove("fa-spin");
+				}
+			}
+		};
+>>>>>>> work
 
 		document.registerElement("fa-icon", {prototype: FaIconProto});
 	})();
