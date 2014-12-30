@@ -1,0 +1,235 @@
+<style>/* light dom  glyphicons only */</style>
+<template>
+<style scoped id="x-bootstrap-style">
+</style>
+<style scoped>
+	/* :host>.light-dom{display:none;} */
+</style>
+<script id="x-bootstrap-script"></script>
+<!-- <content select=".light-dom"></content> -->
+</template>
+
+<template class="gh">
+@font-face {
+  font-family: 'Glyphicons Halflings';
+
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+  }
+ </template>
+
+<script>
+	(function(){
+		"use strict";
+		var d, doc, me, tpl, bsProto, checkVersion, attrList, sani, build, apply_html;
+		
+		d = document;
+		doc = d._currentScript || d.currentScript;
+		me = doc.ownerDocument;
+		tpl = me.querySelector("template").content;
+
+		attrList = ["data-version", "data-js-version", "data-theme", "data-theme-name", "data-cdn", "data-use-js", "data-use-glyphicons"];
+
+		sani = function(url_parts){
+			if(url_parts.indexOf("..") !== -1){
+				url_parts = url_parts.replace(/\.\./g, "");
+			}
+			return encodeURIComponent(url_parts) || "";
+		}
+
+		build = function(that){
+			var version, js_version, theme, url, theme_name, use_js, use_glyphicons, cdn, css_url, js_url, cdn_tpl, result, css, js, base_css_path, glyphicons_tpl;
+
+
+			version = sani(that.getAttribute("data-version") || "latest");
+			js_version = sani(that.getAttribute("data-js-version") || version);
+
+			theme = sani(that.getAttribute("data-theme") || "bootstrap");
+			theme_name = sani(that.getAttribute("data-theme-name") || "default");
+
+			use_js = that.getAttribute("data-use-js");
+			use_glyphicons = that.getAttribute("data-use-glyphicons");
+
+			cdn = that.getAttribute("data-cdn") || "jsdeliver";
+
+			//
+			//	cdn_tpl[cdn][theme].css みたいに使う
+			//
+			cdn_tpl = {
+				"jsdeliver" : {
+					"bootstrap" : {
+						"css" : "https://cdn.jsdelivr.net/bootstrap/{version}/css/bootstrap.min.css",
+						"js" : "https://cdn.jsdelivr.net/bootstrap/{js-version}/js/bootstrap.min.js"
+					},
+					"bootswatch" : {
+						"css" : "https://cdn.jsdelivr.net/bootswatch/{version}/{theme-name}/bootstrap.min.css"
+					}
+				},
+
+				"cdnjs" : {
+					"bootstrap" : {
+						"css" : "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/{version}/css/bootstrap.min.css",
+						"js" : "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/{js-version}/js/bootstrap.min.js"
+					},
+					"bootswatch" : {
+						"css" : "https://cdnjs.cloudflare.com/ajax/libs/bootswatch/{version}/{theme-name}/bootstrap.min.css"
+					}
+				},
+
+				"bootstrapcdn" : {
+					"bootstrap" : {
+						"css" : "https://maxcdn.bootstrapcdn.com/bootstrap/{version}/css/bootstrap.min.css",
+						"js" : "https://maxcdn.bootstrapcdn.com/bootstrap/{js-version}/js/bootstrap.min.js"
+					},
+					"bootswatch" : {
+						"css" : "https://maxcdn.bootstrapcdn.com/bootswatch/{version}/{theme-name}/bootstrap.min.css"
+					}
+				},
+
+				"yandex" : {
+					"bootstrap" : {
+						"css" : "https://yastatic.net/bootstrap/{version}/css/bootstrap.min.css",
+						"js" : "https://yastatic.net/bootstrap/{js-version}/js/bootstrap.min.js"
+					}
+				},
+
+				"asp" : {
+					"bootstrap" : {
+						"css" : "https://ajax.aspnetcdn.com/ajax/bootstrap/{version}/css/bootstrap.min.css",
+						"js" : "https://ajax.aspnetcdn.com/ajax/bootstrap/{js-version}/bootstrap.min.js"
+					}
+				}
+			};
+
+			result = {};
+
+			try{
+				css = cdn_tpl[cdn][theme].css;
+			}catch(e){
+				if(e instanceof TypeError){
+					console.log(cdn+" is not support "+theme+". Use default theme instead.");
+					css = cdn_tpl[cdn].bootstrap.css;
+				}else{
+					throw e;
+				}
+			}
+
+			css = css.replace("{version}", version).replace("{theme-name}", theme_name);
+
+			result.css = css;
+
+			
+
+			if(use_js){
+				js = cdn_tpl[cdn].bootstrap.js;
+				js = js.replace("{js-version}", js_version);
+
+				result.js = js;
+			}
+
+			if(use_glyphicons){
+				// https://example.com/files/css/bootstrap.min.css -> https://example.com/files/ 
+				base_css_path = css.replace(/[^\/]+\/bootstrap\.min\.css$/, "");
+
+				glyphicons_tpl = d.importNode(me.querySelector(".gh").content, true).textContent;
+
+				result.glyphicons_font_face = glyphicons_tpl.replace(/\.\.\//g, base_css_path);
+			}
+
+			return result;
+
+		}
+
+		//
+		//	指定したパーツに結果を反映させる 
+		//	parts未指定の場合は全部に反映させる
+		//
+		apply_html = function(that, result, shadow, parts){
+			var stElm, x_bootstrap_style, x_bootstrap_script;
+
+			parts = parts || ["style", "script", "glyphicons"];
+
+			shadow = shadow || that.shadowRoot;
+
+			if(parts.indexOf("style") !== -1 && typeof(result.css) !== "undefined"){	
+
+				//cssを反映させる
+				x_bootstrap_style = shadow.querySelector("#x-bootstrap-style");
+
+				try{
+					x_bootstrap_style = x_bootstrap_style.sheet;
+					for(var i=0; i<x_bootstrap_style.cssRules.length; ++i){
+						x_bootstrap_style.deleteRule(0);
+					}
+
+					x_bootstrap_style.insertRule('@import url("'+result.css+'")', x_bootstrap_style.cssRules.length);
+					//x_bootstrap_style.insertRule('@import url("'+result.css+'")', 0);
+				}catch(e){
+					console.log(e);
+				//polyfillがサポートしてない？
+					try{
+						for(var i=0; i<shadow.querySelector("#x-bootstrap-style").sheet.length; ++i){
+							shadow.querySelector("#x-bootstrap-style").sheet.deleteRule(0);
+						}
+
+						shadow.querySelector("#x-bootstrap-style").sheet.insertRule('@import url("'+result.css+'")', shadow.querySelector("#x-bootstrap-style").sheet.cssRules.length);
+					}catch(e2){
+						console.log(e2);	
+						shadow.querySelector("style").innerHTML = "";
+						shadow.querySelector("style").innerHTML += '@import url("'+result.css+'")';
+					}
+				}
+			}
+
+			
+			if(parts.indexOf("script") !== -1 && typeof(result.js) !== "undefined"){
+
+				//bootstrap.min.jsを反映させる
+				x_bootstrap_script = shadow.querySelector("#x-bootstrap-script");
+				x_bootstrap_script.src = result.js;
+			}
+
+			if(parts.indexOf("glyphicons") !== -1 && typeof result.glyphicons_font_face !== "undefined"){
+				//@font-faceを設定する
+				stElm = me.querySelector("style");
+				stElm.insertRule(result.glyphicons_font_face, stElm.cssRules.length);
+			}
+
+		}
+		
+		bsProto = Object.create(HTMLElement.prototype);
+
+		bsProto.attachedCallback = function(){
+
+			var  result, shadow;
+
+			result = build(this);
+
+			apply_html(this, result);
+
+		}
+
+		bsProto.createdCallback = function(){
+			var shadow, clone;
+
+			shadow = this.createShadowRoot();
+
+			clone = d.importNode(tpl, true);
+
+			//shadowRootにtemplateの内容を入れる
+			shadow.appendChild(clone);
+			
+			//shadowrootにinnerHTMLを突っ込む
+			shadow.innerHTML += this.innerHTML;
+		}
+
+
+
+		
+			
+
+		//x-bootstrapを登録する
+		d.registerElement("x-bootstrap", {prototype: bsProto});
+
+	})();
+</script>

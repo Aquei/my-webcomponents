@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+	<head>
+		<title>x-bootstrapデモ</title>
+		<script src="https://cdn.jsdelivr.net/webcomponentsjs/latest/webcomponents.min.js"></script>
+
+		<link href="x-bootstrap.html" rel="import">
+		<link href="../base.html" rel="import">
+	</head>
+	<body>
+		<main>
+		<div class="well well-lg">
+			im well without x-bootstrap.
+		</div>
+		<x-bootstrap data-version="3">
+			<div class="well well-lg">
+				<span>im well in shadow dom. </span>
+			</div>
+			</x-bootstrap>
+			</main>
+	</body>
+</html>
+
+
+
