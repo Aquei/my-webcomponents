@@ -1,0 +1,35 @@
+<!--
+	bootstrap panelのひな形 bs-panelエレメントを定義し提供する
+-->
+
+
+
+
+<!-- dependency -->
+<link href="../classlist/classlist.html" rel="import">
+
+<!-- template -->
+<template>
+<div class="panel">
+	<!-- panel header -->
+	<div class="panel-heading">
+		<h3 class="panel-title"><!-- panel title here --></h3>
+		<content selector="header"></content>
+	</div>
+
+	<!-- panel body -->
+	<div class="panel-body">
+		<content selector="*:not(header):not(footer)">
+			<!-- panel contents here -->
+		</content>
+	</div>
+
+	<!-- panel footer -->
+	<div class="penel-footer">
+		<content selector="footer"></content>
+	</div>
+</div>
+</template>
+
+
+<script src="bs-panel.js"></script>
